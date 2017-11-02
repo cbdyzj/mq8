@@ -1,0 +1,20 @@
+{
+  "name": "mq8",
+  "version": "1.0.0",
+  "description": "",
+  "main": "mq.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "amqplib": "^0.5.1"
+  },
+  "devDependencies": {
+    "@types/amqplib": "^0.5.4",
+    "ts-node": "^3.3.0",
+    "typescript": "^2.6.1"
+  }
+}
