@@ -1,5 +1,5 @@
-const Queue = require('./lib/queue')
-const Exchange = require('./lib/exchange')
+const { Queue } = require('./dist/queue')
+const { Exchange } = require('./dist/exchange')
 
 module.exports = {
     Queue,
