@@ -1,6 +1,7 @@
 import * as amqp from 'amqplib'
 import { Channel, Connection } from 'amqplib'
 import { debug } from './util'
+
 // 连接状态
 export enum Status {
     Unconnected,
@@ -13,10 +14,6 @@ export interface MqConfig {
     host: string
     username?: string
     password?: string
-}
-
-// 选项
-export interface MqOption {
     virsualHost?: string
     prefetchCount?: number
     heartbeat?: number
@@ -24,23 +21,28 @@ export interface MqOption {
 
 export class Mq {
 
-    connection: Connection = null
-    channel: Channel = null
-    config: MqConfig
-    option: MqOption
-    status = Status.Unconnected
+    public connection: Connection = null
+    public channel: Channel = null
+    public status = Status.Unconnected
 
-    constructor(config: MqConfig, option: MqOption | any = {}) {
+    private config: MqConfig
+
+    constructor(config: MqConfig) {
         this.config = config
-        this.option = option
     }
 
     async createChannel() {
         if (this.status === Status.Connected) { return this }
         // 开始建立通道
         this.status = Status.Connecting
-        const { host, username = '', password = '' } = this.config
-        const { virsualHost = '', prefetchCount = 0, heartbeat = 5 } = this.option
+        const {
+            host,
+            username = '',
+            password = '',
+            virsualHost = '',
+            prefetchCount = 0,
+            heartbeat = 5,
+        } = this.config
         try {
             if (this.connection) {
                 // 这里吞掉异常
