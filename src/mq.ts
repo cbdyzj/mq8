@@ -21,11 +21,11 @@ export interface MqConfig {
 
 export class Mq {
 
-    public connection: Connection = null
-    public channel: Channel = null
-    public status = Status.Unconnected
+    connection: Connection = null
+    channel: Channel = null
+    status = Status.Unconnected
 
-    private config: MqConfig
+    config: MqConfig
 
     constructor(config: MqConfig) {
         this.config = config
