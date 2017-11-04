@@ -4,11 +4,16 @@ import { ConnectionConfig } from './mq8-connection';
 export interface Config {
     name: string;
 }
+export interface Consumer {
+    onMessage: Function;
+    options?: any;
+}
 /**
  * 对amqplib通道的简单封装
  */
 export declare class Queue {
     name: string;
+    consumers: Consumer[];
     config: Config;
     channel: Mq8Channel;
     constructor(config: Config & ChannelConfig & ConnectionConfig, channel?: Mq8Channel);

@@ -6,6 +6,7 @@ const mq8_channel_1 = require("./mq8-channel");
  */
 class Queue {
     constructor(config, channel) {
+        this.consumers = []; // 消费者
         this.name = config.name;
         this.channel = channel || new mq8_channel_1.Mq8Channel(config);
     }
@@ -16,6 +17,7 @@ class Queue {
     // amqplib的方法的简单封装
     // 注册消费消息的回调
     async consume(onMessage, options) {
+        this.consumers.push({ onMessage, options });
         const ch = await this.getChannel();
         return ch.consume(this.name, onMessage, options);
     }

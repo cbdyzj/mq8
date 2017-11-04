@@ -18,9 +18,9 @@ class Mq8Connection {
     }
     // 为连接注册事件
     registerEvents() {
-        process.once('SIGINT', () => {
+        process.once('SIGINT', async () => {
             this.status = ConnectionStatus.Dead;
-            this.connection.close();
+            await this.connection.close();
             process.exit(0);
         });
         this.connection.on('error', error => util_1.debug(error));
@@ -39,7 +39,7 @@ class Mq8Connection {
         }
         catch (error) {
             this.status = ConnectionStatus.Unconnected;
-            util_1.debug(error);
+            throw error;
         }
         // 连接注册事件
         this.registerEvents();
@@ -53,7 +53,8 @@ class Mq8Connection {
             case ConnectionStatus.Connected:
                 return this.connection;
             case ConnectionStatus.Unconnected:
-                return await this.createConnection();
+                await this.createConnection();
+                return await this.getConnection();
             case ConnectionStatus.Connecting:
                 await util_1.sleep(100);
                 return await this.getConnection();
