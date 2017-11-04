@@ -19,8 +19,14 @@
     "type": "git",
     "url": "git+https://github.com/cbdyzj/mq8.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "amqp",
+    "amqplib",
+    "RabbitMQ",
+    "TypeScript",
+    "JavaScript"
+  ],
+  "author": "cbdyzj",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/cbdyzj/mq8/issues"
