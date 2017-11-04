@@ -32,9 +32,9 @@ export class Mq8Connection {
 
     // 为连接注册事件
     private registerEvents() {
-        process.once('SIGINT', () => {
+        process.once('SIGINT', async () => {
             this.status = ConnectionStatus.Dead
-            this.connection.close()
+            await this.connection.close()
             process.exit(0)
         })
         this.connection.on('error', error => debug(error))
@@ -62,7 +62,7 @@ export class Mq8Connection {
             )
         } catch (error) {
             this.status = ConnectionStatus.Unconnected
-            debug(error)
+            throw error
         }
         // 连接注册事件
         this.registerEvents()
@@ -77,7 +77,8 @@ export class Mq8Connection {
             case ConnectionStatus.Connected:
                 return this.connection
             case ConnectionStatus.Unconnected:
-                return await this.createConnection()
+                await this.createConnection()
+                return await this.getConnection()
             case ConnectionStatus.Connecting:
                 await sleep(100)
                 return await this.getConnection()

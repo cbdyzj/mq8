@@ -48,12 +48,14 @@ export class Mq8Channel {
             this.registerEvents()
         } catch (error) {
             this.status = ChannelStatus.Unconnected
-            debug(error)
+            throw error
         }
         this.status = ChannelStatus.Connected
         debug(`消息队列通道建立！`)
         return this.channel
     }
+
+    async postOperate() { }
 
     // 刷新通道，确保通道存在
     async getChannel(): Promise<Channel> {
@@ -61,7 +63,9 @@ export class Mq8Channel {
             case ChannelStatus.Connected:
                 return this.channel
             case ChannelStatus.Unconnected:
-                return await this.createChannel()
+                await this.createChannel()
+                await this.postOperate()
+                return await this.getChannel()
             case ChannelStatus.Connecting:
                 await sleep(100)
                 return await this.getChannel()

@@ -1,10 +1,15 @@
 import { Channel, Connection } from 'amqplib'
-import { Mq8Channel,  ChannelConfig } from './mq8-channel'
+import { Mq8Channel, ChannelConfig } from './mq8-channel'
 import { ConnectionConfig } from './mq8-connection'
 import { debug, sleep } from './util'
 
 export interface Config {
     name: string // 队列名字
+}
+
+export interface Consumer {
+    onMessage: Function
+    options?: any
 }
 
 /**
@@ -13,6 +18,7 @@ export interface Config {
 export class Queue {
 
     name: string
+    consumers: Consumer[] = []// 消费者
     config: Config
     channel: Mq8Channel
 
@@ -32,6 +38,7 @@ export class Queue {
     // amqplib的方法的简单封装
     // 注册消费消息的回调
     async consume(onMessage, options?): Promise<any> {
+        this.consumers.push({ onMessage, options })
         const ch = await this.getChannel()
         return ch.consume(this.name, onMessage, options)
     }
