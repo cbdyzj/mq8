@@ -4,7 +4,8 @@
   "description": "一个简单的amqplib封装",
   "main": "index.js",
   "scripts": {
-    "test": "node test/test.js"
+    "test": "node test/test.js",
+    "clean": "rm -rf dist"
   },
   "dependencies": {
     "amqplib": "^0.5.1"

@@ -2,7 +2,7 @@ const mq = require('amqplib')
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 
-async function mq_c() {
+async function consumer() {
     try {
         const conn = await mq.connect('amqp://127.0.0.1')
         const ch = await conn.createChannel()
@@ -11,12 +11,12 @@ async function mq_c() {
         ch.consume(q, msg => {
             console.log('from q: ', msg.content.toString())
         }, { noAck: true })
-    } catch (err) {
-        console.log(err)
+    } catch (error) {
+        console.log(error)
     }
 }
 
-async function mq_p() {
+async function producer() {
     try {
         const conn = await mq.connect('amqp://127.0.0.1')
         const ch = await conn.createChannel()
@@ -29,10 +29,10 @@ async function mq_p() {
             await sleep(1000)
         }
 
-    } catch (err) {
-        console.log(err)
+    } catch (error) {
+        console.log(error)
     }
 }
 
-mq_p()
-mq_c()
+consumer.call()
+producer.call()

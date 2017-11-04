@@ -1,8 +1,10 @@
-function debug(message) {
-    if (message instanceof Error) {
-        console.error(message)
+export function debug(...args) {
+    if (args[0] && args[0] instanceof Error) {
+        console.error(...args)
     }
-    console.info(message)
+    console.info(...args)
 }
 
-export { debug }
+export const sleep = (ms: number) =>
+    new Promise(resolve => setTimeout(resolve, ms))
+

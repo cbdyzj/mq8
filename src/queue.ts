@@ -1,32 +1,44 @@
-import * as amqp from 'amqplib'
-import { Channel, Connection } from 'amqplib'
-import { debug } from './util'
-import { Mq, MqConfig } from './mq'
+import { MqConnection } from './mq-connection'
+import { MqChannel, ChannelConfig } from './mq-channel'
+import { debug, sleep } from './util'
 
-export interface QueueConfig extends MqConfig {
+export interface QueueConfig extends ChannelConfig {
     name: string
 }
 
-export class Queue extends Mq {
+/**
+ * 对amqplib通道的简单封装，使用queue.channel
+ */
+export class Queue extends MqChannel {
 
-    // 队列名称
     name: string
-    isAlive: boolean = false
 
-    constructor(config: QueueConfig) {
-        super(config)
+    constructor(connection: MqConnection, config: QueueConfig) {
+        super(connection, config)
         this.name = config.name
     }
 
-    async createQueue() { }
+    // amqplib的方法的简单封装
+    // 注册消费消息的回调
+    async consume(onMessage, options?): Promise<any> {
+        await this.flushChannel()
+        return this.channel.consume(this.name, onMessage, options)
+    }
 
-    async checkQueue() { }
+    // 发送消息，发之前检查通道
+    async sendToQueue(content, options?) {
+        await this.flushChannel()
+        return this.channel.sendToQueue(this.name, content, options)
+    }
 
-    async sendToQueue() { }
+    // ack消息
+    async ack(message, allUpTo?) {
+        return this.channel.ack(message, allUpTo)
+    }
 
-    async getMessage() { }
+    // 不ack消息
+    async nack(message, allUpTo?, requeue?) {
+        return this.channel.nack(message, allUpTo, requeue)
+    }
 
-    async consumeMessage() { }
-
-    async reestablish() { }
 }
