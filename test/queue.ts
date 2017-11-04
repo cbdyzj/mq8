@@ -1,8 +1,8 @@
-import { MqConnection, Queue } from '../src'
+import { Queue } from '../src'
 import { debug, sleep } from '../src/util'
 
 // 消息消费者
-async function consumer(queue: Queue) {
+async function producer(queue: Queue) {
     while (true) {
         await queue.sendToQueue(new Buffer((new Date).toLocaleTimeString()))
         await sleep(1000)
@@ -10,19 +10,13 @@ async function consumer(queue: Queue) {
 }
 
 // 消息生产者
-async function producer(queue: Queue) {
+async function consumer(queue: Queue) {
     queue.consume(msg => {
         debug('收到消息：', msg.content.toString())
         queue.ack(msg)
     })
 }
 
-async function test() {
-    const mqc = new MqConnection
-    const queue = await mqc.createQueue({ name: 'test' })
-    consumer(queue)
-    producer(queue)
-}
-
-test.call(null)
-
+const queue = new Queue({ name: 'hello' })
+consumer(queue)
+producer(queue)

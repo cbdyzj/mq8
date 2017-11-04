@@ -1,3 +1,3 @@
-export { MqConnection } from './mq-connection'
-export { Queue } from './queue'
-export { Exchange } from './exchange'
+export * from './mq8-connection'
+export * from './mq8-channel'
+export * from './queue'

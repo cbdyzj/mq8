@@ -1,44 +1,56 @@
-import { MqConnection } from './mq-connection'
-import { MqChannel, ChannelConfig } from './mq-channel'
+import { Channel, Connection } from 'amqplib'
+import { Mq8Channel,  ChannelConfig } from './mq8-channel'
+import { ConnectionConfig } from './mq8-connection'
 import { debug, sleep } from './util'
 
-export interface QueueConfig extends ChannelConfig {
-    name: string
+export interface Config {
+    name: string // 队列名字
 }
 
 /**
- * 对amqplib通道的简单封装，使用queue.channel
+ * 对amqplib通道的简单封装
  */
-export class Queue extends MqChannel {
+export class Queue {
 
     name: string
+    config: Config
+    channel: Mq8Channel
 
-    constructor(connection: MqConnection, config: QueueConfig) {
-        super(connection, config)
+    constructor(
+        config: Config & ChannelConfig & ConnectionConfig,
+        channel?: Mq8Channel
+    ) {
         this.name = config.name
+        this.channel = channel || new Mq8Channel(config)
+    }
+
+    // 刷新通道，确保通道存在
+    async getChannel(): Promise<Channel> {
+        return await this.channel.getChannel()
     }
 
     // amqplib的方法的简单封装
     // 注册消费消息的回调
     async consume(onMessage, options?): Promise<any> {
-        await this.flushChannel()
-        return this.channel.consume(this.name, onMessage, options)
+        const ch = await this.getChannel()
+        return ch.consume(this.name, onMessage, options)
     }
 
     // 发送消息，发之前检查通道
     async sendToQueue(content, options?) {
-        await this.flushChannel()
-        return this.channel.sendToQueue(this.name, content, options)
+        const ch = await this.getChannel()
+        return ch.sendToQueue(this.name, content, options)
     }
 
     // ack消息
     async ack(message, allUpTo?) {
-        return this.channel.ack(message, allUpTo)
+        const ch = await this.getChannel()
+        return ch.ack(message, allUpTo)
     }
 
     // 不ack消息
     async nack(message, allUpTo?, requeue?) {
-        return this.channel.nack(message, allUpTo, requeue)
+        const ch = await this.getChannel()
+        return ch.nack(message, allUpTo, requeue)
     }
-
 }
