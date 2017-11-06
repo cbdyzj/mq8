@@ -3,7 +3,7 @@ import { Mq8Channel, ChannelConfig } from './mq8-channel'
 import { ConnectionConfig } from './mq8-connection'
 import { debug, sleep } from './util'
 
-export interface Config {
+export interface QueueConfig {
     name: string // 队列名字
 }
 
@@ -19,11 +19,11 @@ export class Queue {
 
     name: string
     consumers: Consumer[] = []// 消费者
-    config: Config
+    config: QueueConfig
     channel: Mq8Channel
 
     constructor(
-        config: Config & ChannelConfig & ConnectionConfig,
+        config: QueueConfig & ChannelConfig & ConnectionConfig,
         channel?: Mq8Channel
     ) {
         this.name = config.name
