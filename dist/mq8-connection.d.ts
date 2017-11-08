@@ -17,7 +17,7 @@ export declare class Mq8Connection {
     config: ConnectionConfig;
     status: ConnectionStatus;
     constructor(config?: ConnectionConfig);
-    private registerEvents();
-    private createConnection();
     getConnection(): Promise<Connection>;
+    private createConnection();
+    private registerEvents();
 }

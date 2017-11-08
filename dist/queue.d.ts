@@ -1,25 +1,24 @@
-import { Channel } from 'amqplib';
+import { Message } from 'amqplib';
 import { Mq8Channel, ChannelConfig } from './mq8-channel';
 import { ConnectionConfig } from './mq8-connection';
-export interface Config {
+export interface QueueConfig extends ChannelConfig {
     name: string;
 }
 export interface Consumer {
-    onMessage: Function;
+    onMessage: (msg: Message | null) => any;
     options?: any;
 }
 /**
  * 对amqplib通道的简单封装
  */
-export declare class Queue {
+export declare class Queue extends Mq8Channel {
     name: string;
-    consumers: Consumer[];
-    config: Config;
-    channel: Mq8Channel;
-    constructor(config: Config & ChannelConfig & ConnectionConfig, channel?: Mq8Channel);
-    getChannel(): Promise<Channel>;
-    consume(onMessage: any, options?: any): Promise<any>;
+    consumer: Consumer;
+    config: QueueConfig;
+    constructor(config: QueueConfig & ConnectionConfig);
+    setConsumer(onMessage: any, options?: any): Promise<any>;
     sendToQueue(content: any, options?: any): Promise<boolean>;
     ack(message: any, allUpTo?: any): Promise<void>;
     nack(message: any, allUpTo?: any, requeue?: any): Promise<void>;
+    protected onRecreate(): Promise<any>;
 }

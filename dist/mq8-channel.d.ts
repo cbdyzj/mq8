@@ -18,8 +18,8 @@ export declare class Mq8Channel {
     connection: Mq8Connection;
     status: ChannelStatus;
     constructor(config: ChannelConfig & ConnectionConfig, connection?: Mq8Connection);
-    private registerEvents();
-    createChannel(): Promise<Channel>;
-    postOperate(): Promise<void>;
     getChannel(): Promise<Channel>;
+    protected onRecreate(): Promise<void>;
+    private createChannel(recreate?);
+    private registerEvents();
 }

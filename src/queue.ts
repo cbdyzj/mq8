@@ -1,44 +1,35 @@
-import { Channel, Connection } from 'amqplib'
+import { Message } from 'amqplib'
 import { Mq8Channel, ChannelConfig } from './mq8-channel'
 import { ConnectionConfig } from './mq8-connection'
 import { debug, sleep } from './util'
 
-export interface QueueConfig {
+export interface QueueConfig extends ChannelConfig {
     name: string // 队列名字
 }
 
 export interface Consumer {
-    onMessage: Function
+    onMessage: (msg: Message | null) => any
     options?: any
 }
 
 /**
  * 对amqplib通道的简单封装
  */
-export class Queue {
+export class Queue extends Mq8Channel {
 
     name: string
-    consumers: Consumer[] = []// 消费者
+    consumer: Consumer // 消费者,一个消息队列实例只有一个消费者
     config: QueueConfig
-    channel: Mq8Channel
 
-    constructor(
-        config: QueueConfig & ChannelConfig & ConnectionConfig,
-        channel?: Mq8Channel
-    ) {
+    constructor(config: QueueConfig & ConnectionConfig) {
+        super(config)
         this.name = config.name
-        this.channel = channel || new Mq8Channel(config)
-    }
-
-    // 刷新通道，确保通道存在
-    async getChannel(): Promise<Channel> {
-        return await this.channel.getChannel()
     }
 
     // amqplib的方法的简单封装
     // 注册消费消息的回调
-    async consume(onMessage, options?): Promise<any> {
-        this.consumers.push({ onMessage, options })
+    async setConsumer(onMessage, options?): Promise<any> {
+        this.consumer = { onMessage, options }
         const ch = await this.getChannel()
         return ch.consume(this.name, onMessage, options)
     }
@@ -59,5 +50,11 @@ export class Queue {
     async nack(message, allUpTo?, requeue?) {
         const ch = await this.getChannel()
         return ch.nack(message, allUpTo, requeue)
+    }
+
+    // 重建通道的钩子
+    protected async onRecreate() {
+        const { onMessage, options } = this.consumer
+        return await this.setConsumer(onMessage, options)
     }
 }

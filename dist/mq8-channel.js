@@ -20,31 +20,6 @@ class Mq8Channel {
         this.config = config;
         this.connection = connection || new mq8_connection_1.Mq8Connection(config);
     }
-    registerEvents() {
-        this.channel.on('error', error => util_1.debug(error));
-        this.channel.on('close', error => {
-            this.status = ChannelStatus.Unconnected;
-            util_1.debug(error);
-        });
-    }
-    async createChannel() {
-        this.status = ChannelStatus.Connecting;
-        const { prefetchCount = 0 } = this.config;
-        try {
-            const conn = await this.connection.getConnection();
-            this.channel = await conn.createChannel();
-            await this.channel.prefetch(prefetchCount);
-            this.registerEvents();
-        }
-        catch (error) {
-            this.status = ChannelStatus.Unconnected;
-            throw error;
-        }
-        this.status = ChannelStatus.Connected;
-        util_1.debug(`消息队列通道建立！`);
-        return this.channel;
-    }
-    async postOperate() { }
     // 刷新通道，确保通道存在
     async getChannel() {
         switch (this.status) {
@@ -52,12 +27,41 @@ class Mq8Channel {
                 return this.channel;
             case ChannelStatus.Unconnected:
                 await this.createChannel();
-                await this.postOperate();
                 return await this.getChannel();
             case ChannelStatus.Connecting:
                 await util_1.sleep(100);
                 return await this.getChannel();
         }
+    }
+    async onRecreate() { }
+    // 创建通道
+    async createChannel(recreate = false) {
+        this.status = ChannelStatus.Connecting;
+        const { prefetchCount = 0 } = this.config;
+        try {
+            const conn = await this.connection.getConnection();
+            this.channel = await conn.createChannel();
+            await this.channel.prefetch(prefetchCount);
+            if (recreate) {
+                await this.onRecreate();
+            }
+            this.registerEvents();
+        }
+        catch (error) {
+            this.status = ChannelStatus.Unconnected;
+            throw error;
+        }
+        this.status = ChannelStatus.Connected;
+        return this.channel;
+    }
+    // 注册通道事件
+    registerEvents() {
+        this.channel.on('error', error => util_1.debug(error));
+        this.channel.on('close', async (error) => {
+            this.status = ChannelStatus.Unconnected;
+            await this.createChannel(true);
+            util_1.debug(error);
+        });
     }
 }
 exports.Mq8Channel = Mq8Channel;

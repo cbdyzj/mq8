@@ -1,18 +1,3 @@
-# mq8
-
-- 一个简单的amqplib封装
-
-## usage
-
-### 安装
-
-```
-$ npm i https://github.com/cbdyzj/mq8.git 
-```
-
-### 使用
-
-```typescript
 import { Queue, Exchange, debug, sleep } from '../src'
 
 // 消息消费者
@@ -46,12 +31,3 @@ async function producer2() {
 consumer()
 producer1()
 producer2()
-
-```
-
-## rabbitmq
-
-```
-$ docker-compose up -d
-$ npm test
-```

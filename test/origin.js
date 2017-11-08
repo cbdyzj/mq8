@@ -34,5 +34,5 @@ async function producer() {
     }
 }
 
-consumer.call()
-producer.call()
+consumer()
+producer()

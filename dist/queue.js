@@ -4,20 +4,15 @@ const mq8_channel_1 = require("./mq8-channel");
 /**
  * 对amqplib通道的简单封装
  */
-class Queue {
-    constructor(config, channel) {
-        this.consumers = []; // 消费者
+class Queue extends mq8_channel_1.Mq8Channel {
+    constructor(config) {
+        super(config);
         this.name = config.name;
-        this.channel = channel || new mq8_channel_1.Mq8Channel(config);
-    }
-    // 刷新通道，确保通道存在
-    async getChannel() {
-        return await this.channel.getChannel();
     }
     // amqplib的方法的简单封装
     // 注册消费消息的回调
-    async consume(onMessage, options) {
-        this.consumers.push({ onMessage, options });
+    async setConsumer(onMessage, options) {
+        this.consumer = { onMessage, options };
         const ch = await this.getChannel();
         return ch.consume(this.name, onMessage, options);
     }
@@ -35,6 +30,11 @@ class Queue {
     async nack(message, allUpTo, requeue) {
         const ch = await this.getChannel();
         return ch.nack(message, allUpTo, requeue);
+    }
+    // 重建通道的钩子
+    async onRecreate() {
+        const { onMessage, options } = this.consumer;
+        return await this.setConsumer(onMessage, options);
     }
 }
 exports.Queue = Queue;

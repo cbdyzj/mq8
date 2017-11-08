@@ -1,5 +1,6 @@
+import * as events from 'events'
 import * as amqp from 'amqplib'
-import { Channel, Connection } from 'amqplib'
+import { Connection } from 'amqplib'
 import { debug, sleep } from './util'
 
 // 连接状态
@@ -30,47 +31,6 @@ export class Mq8Connection {
         this.config = config
     }
 
-    // 为连接注册事件
-    private registerEvents() {
-        // process.on('SIGINT', async () => {
-        //     this.status = ConnectionStatus.Dead
-        //     await this.connection.close()
-        //     process.exit(0)
-        // })
-        this.connection.on('error', error => debug(error))
-        this.connection.on('close', error => {
-            this.status = ConnectionStatus.Unconnected
-            debug(error)
-        })
-    }
-
-    // 根据当前配置创建连接
-    private async createConnection() {
-        this.status = ConnectionStatus.Connecting
-        const {
-            host = '127.0.0.1',
-            username = '',
-            password = '',
-            vhost = '',
-            heartbeat = 5,
-        } = this.config
-        const prefix = username && password ? `${username}:${password}@` : ''
-        try {
-            this.connection = await amqp.connect(
-                `amqp://${prefix}${host}${vhost}`,
-                { heartbeat }
-            )
-        } catch (error) {
-            this.status = ConnectionStatus.Unconnected
-            throw error
-        }
-        // 连接注册事件
-        this.registerEvents()
-        this.status = ConnectionStatus.Connected
-        debug('服务器连接建立成功！')
-        return this.connection
-    }
-
     // 获取连接
     async getConnection(): Promise<Connection> {
         switch (this.status) {
@@ -85,5 +45,40 @@ export class Mq8Connection {
             case ConnectionStatus.Dead:
                 throw new Error('连接已关闭！')
         }
+    }
+
+    // 根据当前配置创建连接
+    private async createConnection() {
+        this.status = ConnectionStatus.Connecting
+        const {
+            host = '127.0.0.1',
+            username = '',
+            password = '',
+            vhost = '',
+            heartbeat = 5,
+        } = this.config
+        const prefix = username && password ? `${encodeURIComponent(username)}:${encodeURIComponent(password)}@` : ''
+        try {
+            this.connection = await amqp.connect(
+                `amqp://${prefix}${host}${encodeURIComponent(vhost)}`,
+                { heartbeat }
+            )
+        } catch (error) {
+            this.status = ConnectionStatus.Unconnected
+            throw error
+        }
+        // 连接注册事件
+        this.registerEvents()
+        this.status = ConnectionStatus.Connected
+        return this.connection
+    }
+
+    // 为连接注册事件
+    private registerEvents() {
+        this.connection.on('error', error => debug(error))
+        this.connection.on('close', error => {
+            this.status = ConnectionStatus.Unconnected
+            debug(error)
+        })
     }
 }
