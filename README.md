@@ -13,7 +13,7 @@ $ npm i https://github.com/cbdyzj/mq8.git
 ### 使用
 
 ```typescript
-import { Queue, Exchange, debug, sleep } from '../src'
+import { Queue, Exchange, debug, sleep } from 'mq8'
 
 // 消息消费者
 async function consumer() {
