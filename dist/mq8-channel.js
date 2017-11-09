@@ -46,13 +46,14 @@ class Mq8Channel {
                 await this.onRecreate();
             }
             this.registerEvents();
+            this.status = ChannelStatus.Connected;
+            util_1.debug('建立通道：', this.toString());
+            return this.channel;
         }
         catch (error) {
             this.status = ChannelStatus.Unconnected;
             throw error;
         }
-        this.status = ChannelStatus.Connected;
-        return this.channel;
     }
     // 注册通道事件
     registerEvents() {

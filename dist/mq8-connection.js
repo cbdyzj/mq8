@@ -46,6 +46,7 @@ class Mq8Connection {
         // 连接注册事件
         this.registerEvents();
         this.status = ConnectionStatus.Connected;
+        util_1.debug('建立连接：', host, vhost);
         return this.connection;
     }
     // 为连接注册事件

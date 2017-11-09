@@ -10,5 +10,8 @@ class Exchange extends mq8_channel_1.Mq8Channel {
         const ch = await this.getChannel();
         return ch.publish(this.name, routingKey, content, options);
     }
+    toString() {
+        return `Exchange ${this.name}`;
+    }
 }
 exports.Exchange = Exchange;

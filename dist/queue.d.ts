@@ -20,5 +20,6 @@ export declare class Queue extends Mq8Channel {
     sendToQueue(content: any, options?: any): Promise<boolean>;
     ack(message: any, allUpTo?: any): Promise<void>;
     nack(message: any, allUpTo?: any, requeue?: any): Promise<void>;
+    toString(): string;
     protected onRecreate(): Promise<any>;
 }

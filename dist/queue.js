@@ -31,6 +31,9 @@ class Queue extends mq8_channel_1.Mq8Channel {
         const ch = await this.getChannel();
         return ch.nack(message, allUpTo, requeue);
     }
+    toString() {
+        return `Queue ${this.name}`;
+    }
     // 重建通道的钩子
     async onRecreate() {
         const { onMessage, options } = this.consumer;

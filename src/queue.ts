@@ -52,6 +52,10 @@ export class Queue extends Mq8Channel {
         return ch.nack(message, allUpTo, requeue)
     }
 
+    toString() {
+        return `Queue ${this.name}`
+    }
+
     // 重建通道的钩子
     protected async onRecreate() {
         const { onMessage, options } = this.consumer

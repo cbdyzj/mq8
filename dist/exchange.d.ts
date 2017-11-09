@@ -8,4 +8,5 @@ export declare class Exchange extends Mq8Channel {
     config: ExchangeConfig;
     constructor(config: ExchangeConfig & ConnectionConfig, connection?: Mq8Connection);
     publish(routingKey: any, content: any, options?: any): Promise<boolean>;
+    toString(): string;
 }

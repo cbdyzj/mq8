@@ -70,6 +70,7 @@ export class Mq8Connection {
         // 连接注册事件
         this.registerEvents()
         this.status = ConnectionStatus.Connected
+        debug('建立连接：', host, vhost)
         return this.connection
     }
 
