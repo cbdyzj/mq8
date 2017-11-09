@@ -1,5 +1,5 @@
 import { Mq8Channel, ChannelConfig } from './mq8-channel'
-import { ConnectionConfig } from './mq8-connection'
+import { Mq8Connection, ConnectionConfig } from './mq8-connection'
 import { debug, sleep } from './util'
 
 export interface ExchangeConfig extends ChannelConfig {
@@ -11,8 +11,8 @@ export class Exchange extends Mq8Channel {
     name: string
     config: ExchangeConfig
 
-    constructor(config: ExchangeConfig & ConnectionConfig) {
-        super(config)
+    constructor(config: ExchangeConfig & ConnectionConfig, connection?: Mq8Connection) {
+        super(config, connection)
         this.name = config.name
     }
 

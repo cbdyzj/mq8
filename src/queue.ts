@@ -1,6 +1,6 @@
 import { Message } from 'amqplib'
 import { Mq8Channel, ChannelConfig } from './mq8-channel'
-import { ConnectionConfig } from './mq8-connection'
+import { Mq8Connection, ConnectionConfig } from './mq8-connection'
 import { debug, sleep } from './util'
 
 export interface QueueConfig extends ChannelConfig {
@@ -21,8 +21,8 @@ export class Queue extends Mq8Channel {
     consumer: Consumer // 消费者,一个消息队列实例只有一个消费者
     config: QueueConfig
 
-    constructor(config: QueueConfig & ConnectionConfig) {
-        super(config)
+    constructor(config: QueueConfig & ConnectionConfig, connection?: Mq8Connection) {
+        super(config, connection)
         this.name = config.name
     }
 
