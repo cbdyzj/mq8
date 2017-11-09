@@ -1,6 +1,6 @@
 import { Message } from 'amqplib';
 import { Mq8Channel, ChannelConfig } from './mq8-channel';
-import { ConnectionConfig } from './mq8-connection';
+import { Mq8Connection, ConnectionConfig } from './mq8-connection';
 export interface QueueConfig extends ChannelConfig {
     name: string;
 }
@@ -15,7 +15,7 @@ export declare class Queue extends Mq8Channel {
     name: string;
     consumer: Consumer;
     config: QueueConfig;
-    constructor(config: QueueConfig & ConnectionConfig);
+    constructor(config: QueueConfig & ConnectionConfig, connection?: Mq8Connection);
     setConsumer(onMessage: any, options?: any): Promise<any>;
     sendToQueue(content: any, options?: any): Promise<boolean>;
     ack(message: any, allUpTo?: any): Promise<void>;

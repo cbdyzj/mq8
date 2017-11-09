@@ -5,8 +5,8 @@ const mq8_channel_1 = require("./mq8-channel");
  * 对amqplib通道的简单封装
  */
 class Queue extends mq8_channel_1.Mq8Channel {
-    constructor(config) {
-        super(config);
+    constructor(config, connection) {
+        super(config, connection);
         this.name = config.name;
     }
     // amqplib的方法的简单封装

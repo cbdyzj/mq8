@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const mq8_channel_1 = require("./mq8-channel");
 class Exchange extends mq8_channel_1.Mq8Channel {
-    constructor(config) {
-        super(config);
+    constructor(config, connection) {
+        super(config, connection);
         this.name = config.name;
     }
     async publish(routingKey, content, options) {
