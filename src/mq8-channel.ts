@@ -66,7 +66,6 @@ export class Mq8Channel {
             throw error
         }
 
-
     }
 
     // 注册通道事件
