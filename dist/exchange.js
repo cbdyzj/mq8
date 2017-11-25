@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const mq8Channel_1 = require("./mq8Channel");
-class Exchange extends mq8Channel_1.Mq8Channel {
+const mq8_channel_1 = require("./mq8_channel");
+class Exchange extends mq8_channel_1.Mq8Channel {
     constructor(config, connection) {
         super(config, connection);
         this.name = config.name;

@@ -1,5 +1,5 @@
-import { Mq8Channel, ChannelConfig } from './mq8Channel';
-import { Mq8Connection, ConnectionConfig } from './mq8Connection';
+import { Mq8Channel, ChannelConfig } from './mq8_channel';
+import { Mq8Connection, ConnectionConfig } from './mq8_connection';
 export interface ExchangeConfig extends ChannelConfig {
     name: string;
 }

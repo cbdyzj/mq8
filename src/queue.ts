@@ -1,6 +1,6 @@
 import { Message } from 'amqplib'
-import { Mq8Channel, ChannelConfig } from './mq8Channel'
-import { Mq8Connection, ConnectionConfig } from './mq8Connection'
+import { Mq8Channel, ChannelConfig } from './mq8_channel'
+import { Mq8Connection, ConnectionConfig } from './mq8_connection'
 import { debug, sleep } from './util'
 
 export interface QueueConfig extends ChannelConfig {
