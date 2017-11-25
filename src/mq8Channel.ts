@@ -1,6 +1,6 @@
 
 import { Channel, Connection } from 'amqplib'
-import { Mq8Connection, ConnectionConfig } from './mq8-connection'
+import { Mq8Connection, ConnectionConfig } from './mq8Connection'
 import { debug, sleep } from './util'
 
 export interface ChannelConfig {
