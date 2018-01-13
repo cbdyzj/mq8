@@ -13,7 +13,7 @@ async function consumer() {
 async function producer1() {
     const queue = new Queue({ name: 'test' })
     while (true) {
-        await queue.sendToQueue(new Buffer('1: ' + (new Date).toLocaleTimeString()))
+        await queue.sendToQueue(Buffer.from('1: ' + (new Date).toLocaleTimeString()))
         await sleep(1000)
     }
 }
@@ -23,7 +23,7 @@ async function producer2() {
     const exchange = new Exchange({ name: 'test' })
     await sleep(500)
     while (true) {
-        await exchange.publish('test', new Buffer('2: ' + (new Date).toLocaleTimeString()))
+        await exchange.publish('test', Buffer.from('2: ' + (new Date).toLocaleTimeString()))
         await sleep(1000)
     }
 }
